@@ -9,13 +9,16 @@ static const char* keywords[MAX_KEYWORDS] = {
 };
 
 static const char* operators = "+-*/%=!<>|&";
+
 static const char* specialCharacters = ",;{}()[]";
 
-void initializeLexer(const char* filename,Token* token)
-{
-    token->fptr_src=fopen(filename,"r");
+static Token token;
 
-    if(token->fptr_src == NULL)
+void initializeLexer(const char* filename)
+{
+    token.fptr_src=fopen(filename,"r");
+
+    if(token.fptr_src == NULL)
     {
         printf("\nError : unable to open source file..\n");
         return;
@@ -29,19 +32,18 @@ void initializeLexer(const char* filename,Token* token)
 
 Token getNextToken()
 {
-     Token token;
-
     int i=0;
     char ch;
+
     token.lexeme[0]='\0';
     token.type=UNKNOWN;
 
-    // skip if space is there
+    // skip if whitespace is there
     do{
 
         ch=fgetc(token.fptr_src);
 
-    }while(isspace(ch));
+    }while(ch !=EOF && isspace(ch));
 
     // check for End of file
     if(ch == EOF)
@@ -52,13 +54,12 @@ Token getNextToken()
     // get token 
     if(isalpha(ch) || ch == '_')
     {
-        token.lexeme[i++]=ch;
-        do{
+        do
+        {
+            token.lexeme[i++] = ch;
+            ch = fgetc(token.fptr_src);
 
-            ch=fgetc(token.fptr_src);
-            token.lexeme[i++]=ch;
-
-        }while(isalpha(ch) || ch =='_');
+        } while (isalnum(ch) || ch == '_');
 
         token.lexeme[i]='\0';
 
@@ -146,21 +147,57 @@ int isOperator(const char* str)
 
 int isSpecialCharacter(char ch)
 {
-
+    if(strchr(specialCharacters,ch)!=NULL)
+    {
+        return 1;
+    }
+    return 0;
 }
 
 //-------------------------------------------------------------------------------//
 
 int isConstant(const char* str)
 {
+    int i=0;
 
+    // check empty string
+    if(str[i]==0)
+    {
+        return 0;
+    }
+    while(str[i]!=0)
+    {
+        if(!isdigit(str[i]))
+        {
+            return 0;
+        }
+        i++;
+    }
+    return 1;
 }
 
 //-------------------------------------------------------------------------------//
 
 int isIdentifier(const char* str)
 {
+    int i=0;
 
+    // check first char
+    if(!(isalpha(str[0]) || str[0] =='_'))
+    {
+        return 0;
+    }
+
+    // remaining char
+    while (str[i] !=0)
+    {
+        if(!(isalpha(str[0]) || str[0] =='_'))
+        {
+            return 0;
+        }
+        i++;
+    }
+    return 1;
 }
 
 //-------------------------------------------------------------------------------//

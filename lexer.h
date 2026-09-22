@@ -19,7 +19,7 @@ typedef struct {
     TokenType type;
 } Token;
 
-void initializeLexer(const char* filename,Token* token);
+void initializeLexer(const char* filename);
 Token getNextToken();
 void categorizeToken(Token* token);
 int isKeyword(const char* str);
