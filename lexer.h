@@ -15,6 +15,7 @@ typedef enum {
 
 typedef struct {
     char lexeme[MAX_TOKEN_SIZE];
+    FILE *fptr_src;
     TokenType type;
 } Token;
 
