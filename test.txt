@@ -1,5 +1,21 @@
 int main()
 {
-    int num1,num2;
-    int sum = num1+num2;
+    int a = 10;
+    int b = 20;
+    float result;
+
+    result = a + b * 2;
+
+    if (result > 50)
+    {
+        printf(Result is greater than 50);
+    }
+    else
+    {
+        printf(Result is less than or equal to 50);
+    }
+
+    a++;
+
+    return 0;
 }

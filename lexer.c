@@ -72,6 +72,27 @@ Token getNextToken()
         categorizeToken(&token);
         return token;
     }
+    else if(isdigit(ch))
+    {
+        do
+        {
+
+            token.lexeme[i++] = ch;
+            ch = fgetc(token.fptr_src);
+
+        } while (isdigit(ch));
+
+        token.lexeme[i++] = '\0';
+        
+        if(ch != EOF)
+        {
+            ungetc(ch,token.fptr_src);
+        }
+
+        // categorize Token
+        categorizeToken(&token);
+        return token;
+    }
 
     // for single char(: ; ...)
     token.lexeme[0]=ch;
