@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include "lexer.h"
 
-int main(int argc, char *argv[]) {
-    initializeLexer(argv[1]);
-
+int main(int argc, char *argv[]) 
+{
     Token token;
-    while ((token = getNextToken()).type != UNKNOWN) {
+    initializeLexer(argv[1],&token);
+    while ((token = getNextToken(&token)).type != UNKNOWN) {
         printf("Token: %s, Type: %d\n", token.lexeme, token.type);
     }
 
