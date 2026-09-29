@@ -10,12 +10,12 @@ typedef enum {
     SPECIAL_CHARACTER,
     CONSTANT,
     IDENTIFIER,
+    STRING_LITERAL,
     UNKNOWN
 } TokenType;
 
 typedef struct {
     char lexeme[MAX_TOKEN_SIZE];
-    FILE *fptr_src;
     TokenType type;
 } Token;
 
@@ -27,5 +27,6 @@ int isOperator(const char* str);
 int isSpecialCharacter(char ch);
 int isConstant(const char* str);
 int isIdentifier(const char* str);
+char *Token_Type(int type);
 
 #endif

@@ -7,9 +7,9 @@ int main(int argc, char *argv[])
 
     Token token;
 
-    while ((token = getNextToken()).type != UNKNOWN) {
-        printf("Token: %s, Type: %d\n", token.lexeme, token.type);
+    while ((token = getNextToken()).type!=UNKNOWN) 
+    {
+        printf("Token: \t  %s \t\t\t Type: %s\n", token.lexeme, Token_Type(token.type));
     }
-
     return 0;
 }

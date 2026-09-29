@@ -1,20 +1,26 @@
 int main()
 {
+    /* skip the
+        multi line 
+        comments*/
+
     int a = 10;
     int b = 20;
     float result;
+ 
+    // single line comments
 
     result = a + b * 2;
 
     if (result > 50)
     {
-        printf(Result is greater than 50);
+        printf("Result is greater than 50\n");
     }
     else
     {
-        printf(Result is less than or equal to 50);
+        printf("Result is less than or equal to 50\n");
     }
-
+    
     a++;
 
     return 0;

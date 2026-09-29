@@ -14,11 +14,15 @@ static const char* specialCharacters = ",;{}()[]";
 
 static Token token;
 
+static FILE*fptr_src;
+
+//-------------------------------------------------------------------------------//
+
 void initializeLexer(const char* filename)
 {
-    token.fptr_src=fopen(filename,"r");
+    fptr_src=fopen(filename,"r");
 
-    if(token.fptr_src == NULL)
+    if(fptr_src == NULL)
     {
         printf("\nError : unable to open source file..\n");
         return;
@@ -41,7 +45,7 @@ Token getNextToken()
     // skip if whitespace is there
     do{
 
-        ch=fgetc(token.fptr_src);
+        ch=fgetc(fptr_src);
 
     }while(ch !=EOF && isspace(ch));
 
@@ -51,13 +55,42 @@ Token getNextToken()
         return token;
     }
 
-    // get token 
-    if(isalpha(ch) || ch == '_')
+    // skip comments 
+    if(ch == '/')
+    {
+        ch = fgetc(fptr_src);
+        if(ch == '/') // ------
+        {
+            while((ch = fgetc(fptr_src))!='\n' && ch !=EOF)
+            {
+            }
+            if(ch == '\n')
+            {
+                return getNextToken();
+            }
+        }
+        if(ch == '*') /*-----*/
+        {
+            char prev = 0;
+
+            while ((ch = fgetc(fptr_src)) != EOF)
+            {
+                if (prev == '*' && ch == '/')
+                {
+                    break;
+                }
+                prev = ch;
+            }
+                return getNextToken();
+        }
+    }
+    // make token of alpha
+    else if(isalpha(ch) || ch == '_')
     {
         do
         {
             token.lexeme[i++] = ch;
-            ch = fgetc(token.fptr_src);
+            ch = fgetc(fptr_src);
 
         } while (isalnum(ch) || ch == '_');
 
@@ -65,32 +98,50 @@ Token getNextToken()
 
         if(ch != EOF)
         {
-            ungetc(ch,token.fptr_src);
+            ungetc(ch,fptr_src);
         }
 
         // categorize Token
         categorizeToken(&token);
         return token;
     }
+    // make token of digit
     else if(isdigit(ch))
     {
         do
         {
 
             token.lexeme[i++] = ch;
-            ch = fgetc(token.fptr_src);
+            ch = fgetc(fptr_src);
 
         } while (isdigit(ch));
 
-        token.lexeme[i++] = '\0';
-        
+        token.lexeme[i] = '\0';
+
         if(ch != EOF)
         {
-            ungetc(ch,token.fptr_src);
+            ungetc(ch,fptr_src);
         }
 
         // categorize Token
         categorizeToken(&token);
+        return token;
+    }
+    // make token of string literal
+    else if(ch == '"')
+    {
+        ch = fgetc(fptr_src);
+        do
+        {  
+            
+            token.lexeme[i++] = ch;
+            ch = fgetc(fptr_src);
+
+        } while (ch != '"' || ch == '\\');
+
+        token.lexeme[i]='\0';
+
+        token.type = STRING_LITERAL;
         return token;
     }
 
@@ -219,6 +270,42 @@ int isIdentifier(const char* str)
         i++;
     }
     return 1;
+}
+
+//-------------------------------------------------------------------------------//
+
+char* Token_Type(int type)
+{
+    switch(type)
+    {
+        case KEYWORD:
+            return "KEYWORD";
+            break;
+
+        case OPERATOR:
+            return "OPERATOR";
+            break;
+
+        case SPECIAL_CHARACTER:
+            return "SPECIAL CHARACTER";
+            break;
+
+        case CONSTANT:
+            return "CONSTANT";
+            break;
+
+        case IDENTIFIER:
+            return "IDENTIFIER";
+            break;
+
+        case STRING_LITERAL:
+            return "STRING LITERAL";
+            break;
+
+        case UNKNOWN:
+            return "UNKNOWN";
+            break;
+    }
 }
 
 //-------------------------------------------------------------------------------//
