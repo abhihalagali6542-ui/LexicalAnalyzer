@@ -1,3 +1,4 @@
+#include<stdio.h>
 int main()
 {
     /* skip the
@@ -7,9 +8,15 @@ int main()
     int a = 10;
     int b = 20;
     float result;
- 
+    char ch = 'c';
+    
+    z=10/29;
     // single line comments
-
+    
+    0b101;
+     1 >= 10;
+     >a
+     //===
     result = a + b * 2;
 
     if (result > 50)

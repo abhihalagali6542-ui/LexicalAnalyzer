@@ -11,6 +11,7 @@ typedef enum {
     CONSTANT,
     IDENTIFIER,
     STRING_LITERAL,
+    CHAR_LITERAL,
     UNKNOWN
 } TokenType;
 
@@ -28,5 +29,6 @@ int isSpecialCharacter(char ch);
 int isConstant(const char* str);
 int isIdentifier(const char* str);
 char *Token_Type(int type);
+int isfloatConstant(const char* str);
 
 #endif

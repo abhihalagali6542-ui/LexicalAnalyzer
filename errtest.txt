@@ -1,0 +1,102 @@
+#include <stdio.h>
+
+int main()
+{
+    /* ================= VALID ================= */
+
+    int num1 = 10;
+    int _value = 20;
+
+    int a = 100;
+    int b = 0b1001;
+    int c = 0123;
+    int d = 0x12AB;
+
+    float x = 1.2;
+    float y = 1.2f;
+    float z = 1.2l;
+
+    char ch1 = 'A';
+    char ch2 = '\n';
+    char ch3 = '?';
+    char ch4 = '\?';
+
+    a = b;
+    a == b;
+    a != b;
+    a <= b;
+    a >= b;
+    a++;
+    a--;
+    a + b;
+    a - b;
+    a * b;
+    a / b;
+    a % b;
+    a && b;
+    a || b;
+
+    if (a > b)
+    {
+        printf("hello world");
+    }
+
+    printf("hello / world");
+    printf("hello // world");
+    printf("hello /* world */");
+
+    return 0;
+
+
+    /* ================= INVALID ================= */
+
+    int value-name = 10;        // ERROR: '-' is not part of identifier
+
+    int 123abc = 10;            // ERROR: invalid identifier
+
+    int num@123 = 20;           // ERROR: invalid character '@'
+
+
+    int invalid = 12.34.56;     // ERROR: invalid floating constant
+
+    int hex = 0x12G4;           // ERROR: invalid hexadecimal constant
+
+    int oct = 089;              // ERROR: invalid octal constant
+
+    int bin = 0b102;            // ERROR: invalid binary constant
+
+    int number = 123abc;        // ERROR: invalid number/identifier combination
+
+
+    char bad1 = 'AB';            // ERROR: multiple characters
+
+    char bad2 = '';              // ERROR: empty character constant
+
+    char bad3 = 'A;              // ERROR: unterminated character constant
+
+
+    printf("hello world);        // ERROR: unterminated string
+
+
+    a @ b;                       // ERROR: invalid operator/character
+
+    a # b;                       // ERROR: invalid character
+
+    a $ b;                       // ERROR: invalid character
+
+    a & b;                       // ERROR if single '&' not supported
+
+    a | b;                       // ERROR if single '|' not supported
+
+    a =! b;                       // ERROR depending on your operator rules
+
+    a ++ +;                       // ERROR depending on parser/lexer
+
+
+    /* This comment is valid */
+
+    /* This comment is also valid */
+
+
+    /* Unterminated comment starts here...
+}
