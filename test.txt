@@ -1,6 +1,7 @@
 #include<stdio.h>
 int main()
 {
+    {}
     /* skip the
         multi line 
         comments*/
@@ -9,9 +10,11 @@ int main()
     int b = 20;
     float result;
     char ch = 'c';
-    
+    a == 0b101
     z=10/29;
     // single line comments
+
+    float f=1.24
     
     0b101;
      1 >= 10;

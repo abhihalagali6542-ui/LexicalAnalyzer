@@ -30,5 +30,9 @@ int isConstant(const char* str);
 int isIdentifier(const char* str);
 char *Token_Type(int type);
 int isfloatConstant(const char* str);
+Token parentheses_valid(const char ch);
+int isopenbracket(const char ch);
+int isclosebracket(const char ch);
+int ismatching(const char ch);
 
 #endif

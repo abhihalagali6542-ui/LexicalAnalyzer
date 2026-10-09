@@ -302,8 +302,11 @@ Token getNextToken()
 
         token.lexeme[0]=ch;
         token.lexeme[1]='\0';
+
         // categorize Token
         categorizeToken(&token);
+        parentheses_valid(ch);
+
         return token;
 
 }
@@ -564,3 +567,73 @@ char* Token_Type(int type)
 }
 
 //-------------------------------------------------------------------------------//
+char openbracket[1000];
+int top=-1;
+
+int isopenbracket(const char ch)
+{
+    if(ch == '{' || ch == '[' || ch == '(')
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int isclosebracket(const char ch)
+{
+    if(ch == '}' || ch == ']' || ch == ')')
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int ismatching(const char ch)
+{
+    if(ch == '}' && openbracket[top]!='{')
+    {
+        return 1;
+    }
+    if(ch == ']' && openbracket[top]!='[')
+    {
+        return 1;
+    }
+    if(ch == ')' && openbracket[top]!='(')
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+Token parentheses_valid(const char ch)
+{
+    if(isopenbracket(ch))
+    {
+        openbracket[++top]=ch;
+    }
+    
+    if(isclosebracket(ch))
+    {
+        if(top == -1)
+        {
+            printf("Lexical Error: Unexpected closing bracket '%c'\n", ch);
+            token.type=UNKNOWN;
+            return token;
+        }
+        else if(ismatching(ch))
+        {
+            printf("Lexical Error: Mismatched bracket '%c', expected matching close for '%c'\n",ch, openbracket[top]);
+            token.type=UNKNOWN;
+            return token;
+        }
+        
+        top--;
+
+        token.type = SPECIAL_CHARACTER;
+        return token;
+    }
+    
+    token.type=SPECIAL_CHARACTER;
+    return token;
+}
