@@ -1,0 +1,34 @@
+#include<stdio.h>
+int main()
+{
+    /* skip the
+        multi line 
+        comments...*
+
+    int 123num;
+    
+    if(a === b)
+    {
+        printf("ramesh is not an ironman he just an ordinary man" ;
+    }
+    else
+    {
+        printf("tony is a ironman);
+    }
+
+    char str[]=  "ramesh is not an ironman 
+                        he just an ordinary man"
+
+    int binary = 0b123 ;
+    unsigned int hexa = 0xabz ;
+    int octa = 078 ;
+
+   float f =  1.2.0 ;
+   double d = 1.2a ;
+
+    char ch = 'AB';
+    char ch = '';
+
+    {[(])]}
+}
+    

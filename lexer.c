@@ -8,7 +8,7 @@ static const char* keywords[MAX_KEYWORDS] = {
     "char", "double", "void", "switch", "case", "default", "const", "static", "sizeof", "struct"
 };
 
-static const char* operators = "+-*/%=!<>|&";
+static const char* operators = "+-*/%=!<>|&~";
 
 static const char* specialCharacters = ",;{}()[]";
 
@@ -28,7 +28,7 @@ void initializeLexer(const char* filename)
         return;
     }
 
-    printf("\nFile opende successfully...\n");
+    //printf("\nFile opende successfully...\n\n");
     return;
 }
 
@@ -117,7 +117,7 @@ Token getNextToken()
             if(!close)
             {
                 token.type = UNKNOWN;
-                printf("Lexical Error: Unterminated comment\n");
+                printf("\nLexical Error: Unterminated comment\n");
                 return token;
             }
             return getNextToken();
@@ -145,7 +145,7 @@ Token getNextToken()
 
             token.type = UNKNOWN;
 
-            printf("Lexical Error: Invalid character constant '%s'\n",token.lexeme);
+            printf("\nLexical Error: Invalid character constant '%s'\n",token.lexeme);
 
             return token;
         }
@@ -160,7 +160,7 @@ Token getNextToken()
             {
                 token.type = UNKNOWN;
 
-                printf("Lexical Error: Unterminated character constant\n");
+                printf("\nLexical Error: Unterminated character constant\n");
 
                 return token;
             }
@@ -182,8 +182,7 @@ Token getNextToken()
 
             token.type = UNKNOWN;
 
-            printf("Lexical Error: Invalid character constant '%s'\n",
-               token.lexeme);
+            printf("\nLexical Error: Invalid character constant '%s'\n",token.lexeme);
 
             return token;
         }
@@ -221,7 +220,7 @@ Token getNextToken()
                 return token;
             }
             token.type =UNKNOWN;
-            printf("Lexical Error : Invalid identifier/constant '%s'\n",token.lexeme);
+            printf("\nLexical Error : Invalid identifier/constant '%s'\n",token.lexeme);
             return token;
         }
         token.lexeme[i] = '\0';
@@ -238,7 +237,7 @@ Token getNextToken()
         }
         else
         {
-            printf("Lexical Error: Invalid constant '%s'\n",token.lexeme);
+            printf("\nLexical Error: Invalid constant '%s'\n",token.lexeme);
             token.type = UNKNOWN;
         }
         return token;
@@ -247,58 +246,86 @@ Token getNextToken()
     else if(ch == '"')
     {
         ch = fgetc(fptr_src);
+
         do
-        {  
+        {
             if(ch == EOF || ch == '\n')
             {
                 token.lexeme[i] = '\0';
-
                 token.type = UNKNOWN;
 
-                printf("Lexical Error: Unterminated string literal '%s'\n",token.lexeme);
+                printf("\nLexical Error: Unterminated string literal '%s'\n",
+                    token.lexeme);
 
                 return token;
             }
-            
+
+            if(ch == '\\')
+            {
+                token.lexeme[i++] = ch;
+                ch = fgetc(fptr_src);
+
+                if(ch == EOF || ch == '\n')
+                {
+                    token.lexeme[i] = '\0';
+                    token.type = UNKNOWN;
+
+                    printf("\nLexical Error: Unterminated string literal '%s'\n",
+                        token.lexeme);
+
+                    return token;
+                }
+            }
+
             token.lexeme[i++] = ch;
             ch = fgetc(fptr_src);
 
-        } while (ch != '"' || ch == '\\');
+        } while(ch != '"');
 
-        token.lexeme[i]='\0';
-
+        token.lexeme[i] = '\0';
         token.type = STRING_LITERAL;
+
         return token;
     }
-    else if(strchr(operators,ch)!=NULL)
+    // Operator handling
+    else if (strchr(operators, ch) != NULL)
     {
-        token.lexeme[0]=ch;
-        char next = fgetc(fptr_src);
-        if(&next != NULL && strchr(operators,next)!=NULL)
+        int next = fgetc(fptr_src);
+        char op[4] = {ch, '\0', '\0', '\0'};
+
+        // Check three-character operators first
+        if ((ch == '<' && next == '<') ||
+            (ch == '>' && next == '>'))
         {
-            token.lexeme[1]=next;
+            op[1] = next;
+            int third = fgetc(fptr_src);
+
+            if (third == '=')
+            {
+                op[2] = third;
+            }
+            else if (third != EOF)
+            {
+                ungetc(third, fptr_src);
+            }
         }
-        if(&next != NULL && strchr(operators,next)==NULL)
+        // Check two-character operators
+        else if ((ch == '+' && next == '+') || (ch == '-' && next == '-') || (ch == '=' && next == '=') || (ch == '!' && next == '=') ||(ch == '<' && next == '=') || (ch == '>' && next == '=') || (ch == '&' && (next == '&' || next == '=')) || (ch == '|' && (next == '|' || next == '=')) || 
+        ((ch == '+' || ch == '-' ||ch == '*' || ch == '/' || ch == '%' || ch == '^') && next == '=') || (ch == '-' && next == '>'))
         {
-            token.lexeme[1]='\0';
-            ungetc(next,fptr_src);
-            token.type = OPERATOR;
-            return token; 
+            op[1] = next;
         }
-        next = fgetc(fptr_src);
-        if(&next != NULL && strchr(operators,next)!=NULL)
+        else
         {
-            token.lexeme[2]=next;
-            token.lexeme[3]='\0';
-            printf("Lexical Error : Invalid identifier/operater '%s'\n",token.lexeme);
-            token.type=UNKNOWN;
-            return  token;
+            if (next != EOF)
+                ungetc(next, fptr_src);
         }
-        ungetc(next,fptr_src);
-        token.lexeme[2]='\0';
+
+        strcpy(token.lexeme, op);
         token.type = OPERATOR;
-        return token;  
+        return token;
     }
+
 
         token.lexeme[0]=ch;
         token.lexeme[1]='\0';
@@ -306,7 +333,6 @@ Token getNextToken()
         // categorize Token
         categorizeToken(&token);
         parentheses_valid(ch);
-
         return token;
 
 }
@@ -567,6 +593,7 @@ char* Token_Type(int type)
 }
 
 //-------------------------------------------------------------------------------//
+
 char openbracket[1000];
 int top=-1;
 
@@ -579,6 +606,8 @@ int isopenbracket(const char ch)
     return 0;
 }
 
+//-------------------------------------------------------------------------------//
+
 int isclosebracket(const char ch)
 {
     if(ch == '}' || ch == ']' || ch == ')')
@@ -587,6 +616,8 @@ int isclosebracket(const char ch)
     }
     return 0;
 }
+
+//-------------------------------------------------------------------------------//
 
 int ismatching(const char ch)
 {
@@ -606,6 +637,8 @@ int ismatching(const char ch)
     return 0;
 }
 
+//-------------------------------------------------------------------------------//
+
 Token parentheses_valid(const char ch)
 {
     if(isopenbracket(ch))
@@ -617,13 +650,13 @@ Token parentheses_valid(const char ch)
     {
         if(top == -1)
         {
-            printf("Lexical Error: Unexpected closing bracket '%c'\n", ch);
+            printf("\nLexical Error: Unexpected closing bracket '%c'\n", ch);
             token.type=UNKNOWN;
             return token;
         }
         else if(ismatching(ch))
         {
-            printf("Lexical Error: Mismatched bracket '%c', expected matching close for '%c'\n",ch, openbracket[top]);
+            printf("\nLexical Error: Mismatched bracket '%c', expected matching close for '%c'\n",ch, openbracket[top]);
             token.type=UNKNOWN;
             return token;
         }
@@ -637,3 +670,5 @@ Token parentheses_valid(const char ch)
     token.type=SPECIAL_CHARACTER;
     return token;
 }
+
+//-------------------------------------------------------------------------------//

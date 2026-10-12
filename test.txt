@@ -1,11 +1,16 @@
 #include<stdio.h>
 int main()
 {
-    {}
+    
     /* skip the
         multi line 
         comments*/
 
+int i=0;
+    ++
+    --
+    >>
+    <<
     int a = 10;
     int b = 20;
     float result;

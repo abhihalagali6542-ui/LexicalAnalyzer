@@ -7,9 +7,12 @@ int main(int argc, char *argv[])
 
     Token token;
 
+    printf("\n");
     while ((token = getNextToken()).type!=UNKNOWN) 
     {
-        printf("Token: \t  %s \t\t\t Type: %s\n", token.lexeme, Token_Type(token.type));
-    }
+        printf("Token :- \t %-35s Type :- \t %s\n", token.lexeme, Token_Type(token.type));
+    } 
+    printf("\n");
+    
     return 0;
 }
